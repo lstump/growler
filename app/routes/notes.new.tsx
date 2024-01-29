@@ -57,7 +57,7 @@ export default function NewNotePage() {
     >
       <div>
         <label className="flex w-full flex-col gap-1">
-          <span>Title: </span>
+          <span>Topic: </span>
           <input
             ref={titleRef}
             name="title"
@@ -77,7 +77,7 @@ export default function NewNotePage() {
 
       <div>
         <label className="flex w-full flex-col gap-1">
-          <span>Body: </span>
+          <span>Content: </span>
           <textarea
             ref={bodyRef}
             name="body"
