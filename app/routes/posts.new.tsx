@@ -3,45 +3,47 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { useEffect, useRef } from "react";
 
-import { createNote } from "~/models/note.server";
+import { createPost } from "~/models/post.server";
 import { requireUserId } from "~/session.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+  debugger;
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
-  const title = formData.get("title");
-  const body = formData.get("body");
+  const topic = formData.get("topic");
+  const content = formData.get("content");
 
-  if (typeof title !== "string" || title.length === 0) {
+  if (typeof topic !== "string" || topic.length === 0) {
     return json(
-      { errors: { body: null, title: "Title is required" } },
+      { errors: { content: null, topic: "Topic is required" } },
       { status: 400 },
     );
   }
 
-  if (typeof body !== "string" || body.length === 0) {
+  if (typeof content !== "string" || content.length === 0) {
     return json(
-      { errors: { body: "Body is required", title: null } },
+      { errors: { content: "Content is required", topic: null } },
       { status: 400 },
     );
   }
 
-  const note = await createNote({ body, title, userId });
+  const post = await createPost({ content, topic, userId });
 
-  return redirect(`/notes/${note.id}`);
+  return redirect(`/posts/${post.id}`);
 };
 
-export default function NewNotePage() {
+export default function NewPostPage() {
+  debugger;
   const actionData = useActionData<typeof action>();
-  const titleRef = useRef<HTMLInputElement>(null);
-  const bodyRef = useRef<HTMLTextAreaElement>(null);
+  const topicRef = useRef<HTMLInputElement>(null);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (actionData?.errors?.title) {
-      titleRef.current?.focus();
-    } else if (actionData?.errors?.body) {
-      bodyRef.current?.focus();
+    if (actionData?.errors?.topic) {
+      topicRef.current?.focus();
+    } else if (actionData?.errors?.content) {
+      contentRef.current?.focus();
     }
   }, [actionData]);
 
@@ -59,18 +61,18 @@ export default function NewNotePage() {
         <label className="flex w-full flex-col gap-1">
           <span>Topic: </span>
           <input
-            ref={titleRef}
-            name="title"
+            ref={topicRef}
+            name="topic"
             className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-            aria-invalid={actionData?.errors?.title ? true : undefined}
+            aria-invalid={actionData?.errors?.topic ? true : undefined}
             aria-errormessage={
-              actionData?.errors?.title ? "title-error" : undefined
+              actionData?.errors?.topic ? "topic-error" : undefined
             }
           />
         </label>
-        {actionData?.errors?.title ? (
-          <div className="pt-1 text-red-700" id="title-error">
-            {actionData.errors.title}
+        {actionData?.errors?.topic ? (
+          <div className="pt-1 text-red-700" id="topic-error">
+            {actionData.errors.topic}
           </div>
         ) : null}
       </div>
@@ -79,19 +81,19 @@ export default function NewNotePage() {
         <label className="flex w-full flex-col gap-1">
           <span>Content: </span>
           <textarea
-            ref={bodyRef}
-            name="body"
+            ref={contentRef}
+            name="content"
             rows={8}
             className="w-full flex-1 rounded-md border-2 border-blue-500 px-3 py-2 text-lg leading-6"
-            aria-invalid={actionData?.errors?.body ? true : undefined}
+            aria-invalid={actionData?.errors?.content ? true : undefined}
             aria-errormessage={
-              actionData?.errors?.body ? "body-error" : undefined
+              actionData?.errors?.content ? "content-error" : undefined
             }
           />
         </label>
-        {actionData?.errors?.body ? (
-          <div className="pt-1 text-red-700" id="body-error">
-            {actionData.errors.body}
+        {actionData?.errors?.content ? (
+          <div className="pt-1 text-red-700" id="content-error">
+            {actionData.errors.content}
           </div>
         ) : null}
       </div>

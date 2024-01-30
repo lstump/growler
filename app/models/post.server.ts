@@ -40,7 +40,7 @@ export function getPost({
 export function getPostListItems({ userId }: { userId: User["id"] }) {
   return prisma.post.findMany({
     where: { userId },
-    select: { id: true, topic: true },
+    select: { id: true, content: true, topic: true },
     orderBy: { updatedAt: "desc" },
   });
 }
