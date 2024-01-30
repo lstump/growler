@@ -8,7 +8,7 @@ import { useUser } from "~/utils";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
-  const postListItems = await getPostListItems({ userId });
+  const postListItems = await getPostListItems();
   return json({ postListItems });
 };
 
