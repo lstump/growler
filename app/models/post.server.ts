@@ -26,21 +26,18 @@ type User = {
 
 
 export function getPost({
-  id,
-  userId,
-}: Pick<Post, "id"> & {
-  userId: User["id"];
-}) {
+  id
+}: Pick<Post, "id">) {
   return prisma.post.findFirst({
-    select: { id: true, content: true, topic: true },
-    where: { id, userId },
+    select: { id: true, content: true, topic: true, userId: true, likes: true},
+    where: { id },
   });
 }
 
 export function getPostListItems() {
   return prisma.post.findMany({
     where: {  },
-    select: { id: true, content: true, topic: true },
+    select: { id: true, content: true, topic: true, likes: true },
     orderBy: { updatedAt: "desc" },
   });
 }

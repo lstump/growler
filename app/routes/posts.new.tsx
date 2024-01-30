@@ -34,7 +34,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function NewPostPage() {
-  debugger;
   const actionData = useActionData<typeof action>();
   const topicRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);

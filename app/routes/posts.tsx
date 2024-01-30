@@ -2,6 +2,11 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHeart as faSolidHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart } from '@fortawesome/free-regular-svg-icons'
+
+
 import { getPostListItems } from "~/models/post.server";
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
@@ -53,7 +58,16 @@ export default function PostsPage() {
                     }
                     to={String(post.id)}
                   >
-                    📝 {post.content}
+                    <div className="flex flex-col justify-between">
+                      <h2 className="font-bold">{post.topic}</h2>
+                      <span className="text-sm text-gray-500">
+                        {/*post.createdAt.toLocaleDateString()*/}
+                      </span>
+                      <div className="">{post.content}</div>
+                    </div>
+                    <div className="flex">
+                      <button><FontAwesomeIcon icon={ faHeart } />{` ${ post.likes.length}` } </button> 
+                    </div>
                   </NavLink>
                 </li>
               ))}

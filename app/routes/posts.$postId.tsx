@@ -10,12 +10,12 @@ import invariant from "tiny-invariant";
 
 import { deletePost, getPost } from "~/models/post.server";
 import { requireUserId } from "~/session.server";
+import { useUser } from "~/utils";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
-  const userId = await requireUserId(request);
   invariant(params.postId, "postId not found");
 
-  const post = await getPost({ id: Number(params.postId), userId });
+  const post = await getPost({ id: Number(params.postId) });
   if (!post) {
     throw new Response("Not Found", { status: 404 });
   }
@@ -32,21 +32,28 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 };
 
 export default function PostDetailsPage() {
+  
   const data = useLoaderData<typeof loader>();
+  const user = useUser();    
 
+  console.log(`user: ${user.id} post owner: ${data.post.userId} show delete: ${data.post.userId === user.id}`);
   return (
     <div>
       <h3 className="text-2xl font-bold">{data.post.topic}</h3>
       <p className="py-6">{data.post.content}</p>
       <hr className="my-4" />
-      <Form method="post">
-        <button
-          type="submit"
-          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-400"
-        >
-          Delete
-        </button>
-      </Form>
+      {
+        data.post.userId === user.id ?
+          <Form method="post">
+            <button
+              type="submit"
+              className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-400"
+            >
+              Delete
+            </button>
+          </Form> :
+          null
+      }
     </div>
   );
 }
