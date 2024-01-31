@@ -70,3 +70,41 @@ export function deletePost({
     where: { id, userId },
   });
 }
+
+export function createLike({
+  userId,
+  postId
+  }: Pick<Like, "userId" & "postId"> & { userId: User["id"]; postId: Post["id"]; }) {  
+  return prisma.like.create({  
+    data: {  
+      user: {  
+        connect: {  
+          id: userId  
+        }  
+      },  
+      post: {  
+        connect: {  
+          id: postId  
+        }  
+      }  
+    }  
+  });  
+}
+
+export function deleteLikes({
+  postId,
+  userId,
+}: Pick<Like, "postId"> & { userId: User["id"] }) {
+  return prisma.like.deleteMany({
+    where: { postId, userId },
+  });
+}
+
+export function getPostWithLikers({
+  id
+}: Pick<Post, "id">) {  
+  return prisma.post.findUnique({  
+    where: { id: id },  
+    include: { likes: { include: { user: true } } }  
+  });
+}  

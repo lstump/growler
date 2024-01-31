@@ -7,7 +7,6 @@ import { createPost } from "~/models/post.server";
 import { requireUserId } from "~/session.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  debugger;
   const userId = await requireUserId(request);
 
   const formData = await request.formData();

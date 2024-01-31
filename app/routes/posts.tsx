@@ -1,13 +1,13 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { Form, Link, NavLink, Outlet, useActionData, useLoaderData } from "@remix-run/react";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart as faSolidHeart } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-regular-svg-icons'
 
 
-import { getPostListItems } from "~/models/post.server";
+import { createPost, getPostListItems } from "~/models/post.server";
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 
@@ -17,9 +17,37 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ postListItems });
 };
 
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const userId = await requireUserId(request);
+
+  const formData = await request.formData();
+  const topic = formData.get("topic");
+  const content = formData.get("content");
+
+  if (typeof topic !== "string" || topic.length === 0) {
+    return json(
+      { errors: { content: null, topic: "Topic is required" } },
+      { status: 400 },
+    );
+  }
+
+  if (typeof content !== "string" || content.length === 0) {
+    return json(
+      { errors: { content: "Content is required", topic: null } },
+      { status: 400 },
+    );
+  }
+
+  const post = await createPost({ content, topic, userId });
+
+  return redirect(`/posts/${post.id}`);
+};
+
 export default function PostsPage() {
   const data = useLoaderData<typeof loader>();
   const user = useUser();
+  const actionData = useActionData<typeof action>();
+
 
   return (
     <div className="flex h-full min-h-screen flex-col">
@@ -77,6 +105,11 @@ export default function PostsPage() {
 
         <div className="flex-1 p-6">
           <Outlet />
+        </div>
+        <div>
+        <div className="block p-4 text-xl">
+          Charts
+          </div>
         </div>
       </main>
     </div>
