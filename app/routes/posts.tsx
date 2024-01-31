@@ -10,6 +10,8 @@ import { faHeart } from '@fortawesome/free-regular-svg-icons'
 import { createPost, getPostListItems } from "~/models/post.server";
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
+import { ChartVisuals } from "~/components/ChartVisuals";
+import { Post } from "@prisma/client";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
@@ -47,7 +49,6 @@ export default function PostsPage() {
   const data = useLoaderData<typeof loader>();
   const user = useUser();
   const actionData = useActionData<typeof action>();
-
 
   return (
     <div className="flex h-full min-h-screen flex-col">
@@ -107,9 +108,7 @@ export default function PostsPage() {
           <Outlet />
         </div>
         <div>
-        <div className="block p-4 text-xl">
-          Charts
-          </div>
+          <ChartVisuals key={data.postListItems.length}  posts={data.postListItems as unknown as Post[]} />
         </div>
       </main>
     </div>
