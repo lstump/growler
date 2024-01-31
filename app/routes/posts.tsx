@@ -13,6 +13,15 @@ import { useUser } from "~/utils";
 import { ChartVisuals } from "~/components/ChartVisuals";
 import { Post } from "@prisma/client";
 
+const TIME_FORMAT_OPTIONS = {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+};
+
+// ${new Intl.DateTimeFormat('en-US', TIME_FORMAT_OPTIONS).format(Number(post.createdAt))}`};
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
   const postListItems = await getPostListItems();
@@ -56,7 +65,7 @@ export default function PostsPage() {
         <h1 className="text-3xl font-bold">
           <Link to=".">Growler</Link>
         </h1>
-        <p>{user.email}</p>
+        <p>{`${user.username} <${user.email}>`}</p>
         <Form action="/logout" method="post">
           <button
             type="submit"
@@ -90,7 +99,7 @@ export default function PostsPage() {
                     <div className="flex flex-col justify-between">
                       <h2 className="font-bold">{post.topic}</h2>
                       <span className="text-sm text-gray-500">
-                        {/*post.createdAt.toLocaleDateString()*/}
+                        {`${post.user.username} at ${post.createdAt}`} 
                       </span>
                       <div className="">{post.content}</div>
                     </div>

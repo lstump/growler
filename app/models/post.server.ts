@@ -37,7 +37,7 @@ export function getPost({
 export function getPostListItems() {
   return prisma.post.findMany({
     where: {  },
-    select: { id: true, content: true, topic: true, likes: true },
+    select: { id: true, content: true, topic: true, likes: true, user: true, createdAt: true },
     orderBy: { updatedAt: "desc" },
   });
 }
@@ -105,6 +105,6 @@ export function getPostWithLikers({
 }: Pick<Post, "id">) {  
   return prisma.post.findUnique({  
     where: { id: id },  
-    include: { likes: { include: { user: true } } }  
+    select: { id: true, content: true, topic: true, likes: true, user: true, createdAt: true },
   });
 }  

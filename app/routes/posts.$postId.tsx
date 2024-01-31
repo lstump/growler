@@ -76,12 +76,15 @@ export default function PostDetailsPage() {
   return (
     <div>
       <h3 className="text-2xl font-bold">{data.post.topic}</h3>
+      <span className="text-sm text-gray-500">
+        {`${post.user.username} at ${post.createdAt}`} 
+      </span>
       <p className="py-6">{data.post.content}</p>
       <hr className="my-4" />
       <Form method="post">
         <div className="flex gap-4">
           {
-            data.post.userId === user.id ?
+            data.post.user.id === user.id ?
               <button
                 type="submit"
                 name="_action"
